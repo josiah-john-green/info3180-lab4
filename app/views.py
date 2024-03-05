@@ -9,6 +9,7 @@ from app.forms import LoginForm
 from app.forms import UploadForm
 from app.utils import get_uploaded_images
 
+
 ###
 # Routing for your application.
 ###
@@ -93,6 +94,13 @@ def login():
 def load_user(id):
     return db.session.execute(db.select(UserProfile).filter_by(id=id)).scalar()
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('home'))
+
 ###
 # The functions below should be applicable to all Flask apps.
 ###
@@ -112,7 +120,6 @@ def send_text_file(file_name):
     file_dot_text = file_name + '.txt'
     return app.send_static_file(file_dot_text)
 
-
 @app.after_request
 def add_header(response):
     """
@@ -122,7 +129,6 @@ def add_header(response):
     response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
     response.headers['Cache-Control'] = 'public, max-age=0'
     return response
-
 
 @app.errorhandler(404)
 def page_not_found(error):
